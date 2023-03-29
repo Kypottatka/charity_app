@@ -33,8 +33,16 @@ class FundProfile(models.Model):
 # Пометка: позже добавить возможность привязки карты
 # и сделать донаты через Stripe
 class Donation(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    fund = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        CustomUser,
+        related_name='user_donations',
+        on_delete=models.CASCADE
+    )
+    fund = models.ForeignKey(
+        CustomUser,
+        related_name='fund_donations',
+        on_delete=models.CASCADE
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 

@@ -1,12 +1,13 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from main import views
-from main.views import FundraisingCampaignView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index, name='home'),
+    path('', views.index, name='index'),
+    path('auth/', include('users.urls')),
+    path('auth/', include('django.contrib.auth.urls')),
     path('user/<int:user_id>/', views.user_profile, name='user_profile'),
     path(
         'fund/',
@@ -20,12 +21,12 @@ urlpatterns = [
     ),
     path(
         'fund/<int:fund_id>/campaign/',
-        views.list_fundraising_campaigns,
+        views.BasePostListView.as_view(),
         name='list_fundraising_campaigns',
     ),
     path(
         'fund/<int:fund_id>/campaign/<int:campaign_id>/',
-        FundraisingCampaignView.as_view(),
+        views.FundraisingCampaignView.as_view(),
         name='fundraising_campaign',
     ),
     path(
