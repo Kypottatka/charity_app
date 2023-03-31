@@ -34,19 +34,18 @@ def user_profile(request, user_id):
     if user.is_fund:
         return redirect('main:fund_profile', fund_id=user_id)
 
+    user_profile, created = UserProfile.objects.get_or_create(user=user)
+
     volunteer_vacancy = VolunteerVacancy.objects.filter(user=user)
     nonprofit_event = NonprofitEvent.objects.filter(user=user)
 
     posts = list(volunteer_vacancy) + list(nonprofit_event)
-
-    user_profile = UserProfile.objects.get(user=user)
 
     page_number = request.GET.get('page')
     page_obj = paginator(page_number, posts)
     context = {
         'user': user,
         'user_profile': user_profile,
-        'username': user.username,
         'posts': posts,
         'page_obj': page_obj,
     }
@@ -86,7 +85,6 @@ def fund_profile(request, fund_id):
     }
 
     for post in fundraising_campaigns:
-        post.show_link = True
         post.link_url = reverse(
             'main:fundraising_campaign',
             args=[fund_id, post.id])
@@ -95,9 +93,19 @@ def fund_profile(request, fund_id):
 
 def list_funds(request):
     template = 'main/funds.html'
-    funds = CustomUser.objects.filter(is_fund=True)
+    funds = FundProfile.objects.all()
     page_obj = paginator(request.GET.get('page'), funds)
-    return render(request, template, {'page_obj': page_obj})
+
+    context = {
+        'page_obj': page_obj,
+    }
+
+    for fund in funds:
+        fund_user = fund.user
+        fund.link_url = reverse(
+            'main:fund_profile',
+            args=[fund_user.id])
+    return render(request, template, context)
 
 
 def create_comment(request, model_type, model_id):
@@ -151,7 +159,7 @@ def base_post_view(request, post_id, template_name, model, form_class):
 
 
 def fundraising_campaign_view(request, fund_id, pk):
-    template = 'includes/article.html'
+    template = 'includes/article_campaign.html'
     return base_post_view(
         request,
         pk,

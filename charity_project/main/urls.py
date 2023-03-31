@@ -31,7 +31,7 @@ urlpatterns = [
         name='fund_profile'
     ),
     path(
-        'fund/<int:fund_id>/campaign/<int:campaign_id>/',
+        'fund/<int:fund_id>/campaign/<int:pk>/',
         views.fundraising_campaign_view,
         name='fundraising_campaign',
     ),

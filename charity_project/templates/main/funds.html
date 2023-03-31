@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
     <h1>FUNDS</h1>
+    {% for fund in page_obj %}
+        {% include 'includes/fund.html' %}
+            <a href="{% url 'main:fund_profile' fund_id=fund.user.id %}">подробная информация</a>
+        {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
 {% endblock %}

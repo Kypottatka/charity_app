@@ -14,8 +14,8 @@
         <h3>Всего постов: {{ page_obj.paginator.count }} </h3>
     </div>
     {% for post in page_obj %}
-        {% include 'includes/article.html' with show_link=True %}
-        <a href="{{ main.fundraising_campaign }}">подробная информация</a>
+        {% include 'includes/article_campaign.html' %}
+        <a href="{% url 'main:fundraising_campaign' fund_id=post.fund.id pk=post.id %}">подробная информация</a>
         {% if not forloop.last %}<hr>{% endif %}
     {% endfor %}
     {% include 'main/includes/paginator.html' %}
