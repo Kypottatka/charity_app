@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}
+Профайл пользователя {{ user.username }}
+{% endblock %}
+{% block content %}
+    <div class="mb-5">
+        <h1>Все посты пользователя {{ user.username }}</h1>
+        <img src="{% thumbnail user_profile.avatar "400x400" crop="center" %}">
+        <h4>Местоположение: {{ user_profile.location }} </h4>
+    </div>
+    <div class="mb-5">
+        <h3>Всего постов: {{ page_obj.paginator.count }} </h3>
+    </div>
+    {% for post in page_obj %}
+        {% include 'includes/article.html' with show_link=True %}
+        {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
+    {% include 'main/includes/paginator.html' %}
+{% endblock %}

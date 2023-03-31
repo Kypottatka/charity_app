@@ -7,6 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'y3(1xu8@9=gw5c+-pk4b81gz1yz)(&j8!p3tkt*3!##*bt2os2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+THUMBNAIL_DEBUG = True
 DEBUG = True
 
 ALLOWED_HOSTS = [
@@ -24,6 +25,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'debug_toolbar',
+    'sorl.thumbnail',
+
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
     'core.apps.CoreConfig',
@@ -37,6 +42,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'charity_project.urls'
@@ -109,10 +115,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'main.CustomUser'
 
 POSTS_ON_PAGE = 10
 
-LOGIN_REDIRECT_URL = 'index'
+LOGIN_REDIRECT_URL = 'main:index'

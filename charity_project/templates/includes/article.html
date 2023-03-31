@@ -1,0 +1,22 @@
+{% load thumbnail %}
+{% load user_filters %}
+<article>
+  <ul>
+    <h3 class="card-title">{{ post.title }}</h3>
+    <p class="card-text">{{ post.description }}</p>
+    <li>
+    Автор: {{ user.username }}
+    </li>
+    <li>
+    Дата публикации: {{ post.created_at|date:"d M Y" }}
+    </li>
+    {% if post.location %}
+    <li>
+      Местоположение: {{ post.location }}
+    </li>
+    {% endif %}
+  </ul>
+  {% if show_link and post.show_link %}
+  <a href="{{ post.link_url }}">подробная информация</a>
+  {% endif %}
+</article>

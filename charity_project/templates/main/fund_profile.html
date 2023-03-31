@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}
+Профайл фонда {{ fund_profile.name }}
+{% endblock %}
+{% block content %}
+    <div class="mb-5">
+        <h1>Все посты фонда {{ fund_profile.name }}</h1>
+        <img src="{% thumbnail fund_profile.avatar "400x400" crop="center" %}">
+        <h2>Описание фонда</h2>
+        <p>{{ fund_profile.description }}</p>
+    </div>
+    <div class="mb-5">
+        <h3>Всего постов: {{ page_obj.paginator.count }} </h3>
+    </div>
+    {% for post in page_obj %}
+        {% include 'includes/article.html' with show_link=True %}
+        <a href="{{ main.fundraising_campaign }}">подробная информация</a>
+        {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
+    {% include 'main/includes/paginator.html' %}
+{% endblock %}

@@ -35,6 +35,8 @@ class FundProfile(models.Model):
 class Donation(models.Model):
     user = models.ForeignKey(
         CustomUser,
+        # related_name для обратной связи, предотвращает конфликты
+        # полей user и fund
         related_name='user_donations',
         on_delete=models.CASCADE
     )
