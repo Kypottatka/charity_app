@@ -13,7 +13,7 @@
           <li class="list-group-item">
             Фонд:
             <br>
-            <a href="{% url 'main:fund_profile' fund_id=post.fund.id %}">страница фонда</a>
+            <a href="{% url 'main:fund_profile' fund_id=post.fund.id %}" style="color: #fd7e14;">страница фонда</a>
           </li>
           <li class="list-group-item">
             Автор: {{ post.fund.username }}
@@ -25,5 +25,4 @@
         <p class="card-text">{{ post.description }}</p>
       </article>
     </div>
-
 {% endblock %}

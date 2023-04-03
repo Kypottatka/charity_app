@@ -11,7 +11,7 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=255, unique=True)
-    is_fund = models.BooleanField(default=False)
+    is_fund = models.BooleanField(default=False, help_text='Фонд')
 
 
 # Модель профиля для пользователей

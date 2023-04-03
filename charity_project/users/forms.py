@@ -6,7 +6,10 @@ from main.models import CustomUser
 class CreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
     username = forms.CharField(required=True)
-    is_fund = forms.BooleanField(required=False)
+    is_fund = forms.BooleanField(
+        required=True,
+        widget=forms.CheckboxInput,
+    )
 
     class Meta(UserCreationForm.Meta):
         model = CustomUser

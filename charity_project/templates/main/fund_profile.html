@@ -4,19 +4,24 @@
 Профайл фонда {{ fund_profile.name }}
 {% endblock %}
 {% block content %}
-    <div class="mb-5">
-        <h1>Все посты фонда {{ fund_profile.name }}</h1>
-        <img src="{% thumbnail fund_profile.avatar "400x400" crop="center" %}">
-        <h2>Описание фонда</h2>
-        <p>{{ fund_profile.description }}</p>
+<section id="team" class="team text-center">
+    <div class="row">
+            <div class="member">
+                <img src="{% thumbnail fund_profile.avatar "400x400" crop="center" %}">
+                    <h1>{{ fund_profile.name }}</h1>
+                    <hr></hr>
+            </div>
     </div>
     <div class="mb-5">
+        <h2>Описание фонда</h2>
+        <p>{{ fund_profile.description }}</p>
         <h3>Всего постов: {{ page_obj.paginator.count }} </h3>
     </div>
     {% for post in page_obj %}
         {% include 'includes/article_campaign.html' %}
-        <a href="{% url 'main:fundraising_campaign' fund_id=post.fund.id pk=post.id %}">подробная информация</a>
+        <a href="{% url 'main:fundraising_campaign' fund_id=post.fund.id pk=post.id %}" style="color: #fd7e14;">подробная информация</a>
         {% if not forloop.last %}<hr>{% endif %}
     {% endfor %}
     {% include 'main/includes/paginator.html' %}
+</section>
 {% endblock %}

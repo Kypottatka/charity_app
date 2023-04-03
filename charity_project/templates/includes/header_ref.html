@@ -1,0 +1,93 @@
+{% load static %}
+{% block header %}
+<!-- ======= Header ======= -->
+<header id="header" class="d-flex align-items-center" style="background-color: #00173b;">
+    <div class="container d-flex align-items-center">
+      <h1 class="logo me-auto"><a href="{% url 'main:index' %}" style="color: #fd7e14;">Charity App</a></h1>
+
+      <nav id="navbar" class="navbar">
+        <ul class="nav nav-pills">
+        {% with request.resolver_match.view_name as view_name %}
+        {% if view_name  == 'main:index' %}
+          <li><a class="nav-link link-light scrollto" href="#hero">Home</a></li>
+          <li><a class="nav-link link-light scrollto" href="#about">About</a></li>
+          <li><a class="nav-link link-light scrollto" href="#team">Team</a></li>
+          {% endif %}
+          <li class="dropdown"><a href="#" class="link-light"><span>Posts</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+                  <li> 
+                    <a class="
+                    {% if view_name  == 'main:fundraising_campaign_list' %}
+                        active
+                      {% endif %}" 
+                      href="{% url 'main:fundraising_campaign_list' %}" style="color: #fd7e14;">
+                      Кампании по сбору средств
+                    </a>
+                  </li>
+                  <li> 
+                    <a class="
+                    {% if view_name  == 'main:nonprofit_event_list' %}
+                        active
+                      {% endif %}" 
+                      href="{% url 'main:nonprofit_event_list' %}" style="color: #fd7e14;">
+                      Некомерческие мероприятия
+                    </a>
+                  </li>
+                  <li> 
+                    <a class="
+                    {% if view_name  == 'main:volunteer_vacancy_list' %}
+                        active
+                      {% endif %}" 
+                      href="{% url 'main:volunteer_vacancy_list' %}" style="color: #fd7e14;">
+                      Ваканси волонтеров
+                    </a>
+                  </li>
+            </ul>
+          </li>
+          {% if request.user.is_authenticated %}
+          <li> 
+            <a class="link-light
+            {% if view_name  == 'users:logout' %}
+                active
+            {% endif %}" 
+            href="{% url 'users:logout' %}">
+              Выйти
+            </a>
+          </li>
+          <li> 
+            <a class="link-light
+            {% if view_name  == 'main:user_profile_me' %}
+              active
+            {% endif %}" 
+            href="{% url 'main:user_profile_me' %}">
+            Пользователь: {{ user.username }}
+            </a>
+          </li>
+          {% else %}
+          <li> 
+            <a class="link-light
+            {% if view_name  == 'users:login' %}
+              active
+            {% endif %}"
+            href="{% url 'users:login' %}">
+            Войти
+            </a>
+          </li>
+          <li> 
+            <a class=" link-light
+            {% if view_name  == 'users:signup' %}
+              active
+            {% endif %}" 
+            href="{% url 'users:signup' %}">
+            Регистрация
+            </a>
+          </li>
+          {% endif %}
+          {% endwith %} 
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
+{% endblock header%}

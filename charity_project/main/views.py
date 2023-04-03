@@ -76,6 +76,12 @@ def fund_profile(request, fund_id):
     template = 'main/fund_profile.html'
 
     fund = get_object_or_404(CustomUser, id=fund_id, is_fund=True)
+
+    try:
+        fund_profile = FundProfile.objects.get(user=fund)
+    except FundProfile.DoesNotExist:
+        fund_profile = FundProfile.objects.create(user=fund, name=fund.username)
+
     fundraising_campaigns = FundraisingCampaign.objects.filter(fund=fund)
 
     fund_profile = FundProfile.objects.get(user=fund)

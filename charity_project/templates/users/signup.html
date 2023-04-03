@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Зарегистрироваться{% endblock %}
 {% block content %}
-  <div class="row justify-content-center">
+  <div class="row justify-content-center text-center">
     <div class="col-md-8 p-5">
       <div class="card">
         <div class="card-header">Зарегистрироваться</div>
@@ -34,8 +34,21 @@
                         <span class="required text-danger">*</span>
                       {% endif %}
                   </label>
-                  {# К полю ввода добавляем атрибут class #}
-                  {{ field|addclass:'form-control' }} 
+                  {% if field.name == 'is_fund' %}
+                    {# Для поля is_fund используем checkbox input #}
+                    <div class="text-center">
+                    <input 
+                      type="checkbox"
+                      name="{{ field.name }}"
+                      id="{{ field.id_for_label }}"
+                      {% if field.value %}checked{% endif %}
+                      class="form-check-input"
+                    />
+                    </div>
+                  {% else %}
+                    {# Для всех остальных полей используем обычный input #}
+                    {{ field|addclass:'form-control' }} 
+                  {% endif %}
                     {% if field.help_text %}
                       <small 
                          id="{{ field.id_for_label }}-help"
@@ -46,11 +59,9 @@
                     {% endif %}
                 </div>
               {% endfor %}
-              <div class="col-md-6 offset-md-4">
                 <button type="submit" class="btn btn-primary">
                   Зарегистрироваться
                 </button>
-              </div>
             </form>
           </div> 
         </div> 

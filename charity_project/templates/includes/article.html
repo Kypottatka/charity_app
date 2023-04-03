@@ -1,7 +1,7 @@
 {% load thumbnail %}
 {% load user_filters %}
 <article>
-  <ul>
+  <ul style="list-style: none;">
     <h3 class="card-title">{{ post.title }}</h3>
     <p class="card-text">{{ post.description }}</p>
     <li>
@@ -17,6 +17,6 @@
     {% endif %}
   </ul>
   {% if show_link and post.show_link %}
-  <a href="{{ post.link_url }}">подробная информация</a>
+  <a href="{{ post.link_url }}" style="color: #fd7e14;">подробная информация</a>
   {% endif %}
 </article>
