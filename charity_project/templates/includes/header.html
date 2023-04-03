@@ -9,9 +9,36 @@
       </a>
       {% with request.resolver_match.view_name as view_name %}
       <ul class="nav nav-pills">
-        {% if request.user.is_authenticated %}
         <li class="nav-item"> 
           <a class="nav-link link-light
+          {% if view_name  == 'main:fundraising_campaign_list' %}
+              active
+            {% endif %}" 
+            href="{% url 'main:fundraising_campaign_list' %}">
+            Кампании по сбору средств
+          </a>
+        </li>
+        <li class="nav-item"> 
+          <a class="nav-link link-light
+          {% if view_name  == 'main:nonprofit_event_list' %}
+              active
+            {% endif %}" 
+            href="{% url 'main:nonprofit_event_list' %}">
+            Некомерческие мероприятия
+          </a>
+        </li>
+        <li class="nav-item"> 
+          <a class="nav-link link-light
+          {% if view_name  == 'main:volunteer_vacancy_list' %}
+              active
+            {% endif %}" 
+            href="{% url 'main:volunteer_vacancy_list' %}">
+            Ваканси волонтеров
+          </a>
+        </li>
+        {% if request.user.is_authenticated %}
+        <li class="nav-item"> 
+          <a class="nav-link link-dark
           {% if view_name  == 'users:logout' %}
               active
             {% endif %}" 
@@ -19,8 +46,14 @@
             Выйти
           </a>
         </li>
-        <li>
+        <li class="nav-item">
+          <a class="nav-link link-dark
+          {% if view_name  == 'main:user_profile_me' %}
+              active
+            {% endif %}" 
+            href="{% url 'main:user_profile_me' %}">
           Пользователь: {{ user.username }}
+          </a>
         </li>
         {% else %}
         <li class="nav-item"> 

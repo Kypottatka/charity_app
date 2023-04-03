@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Fundraising Campaigns</h1>
+    {% for post in page_obj %}
+        {% include 'includes/article_campaign.html' %}
+        <a href="{% url 'main:fundraising_campaign' fund_id=post.fund.id pk=post.id %}">подробная информация</a>
+        {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
+    {% include 'main/includes/paginator.html' %}
+{% endblock %}

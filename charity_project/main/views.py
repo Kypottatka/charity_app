@@ -5,6 +5,8 @@ from django.urls import reverse
 
 from .forms import (
     FundraisingCampaignForm,
+    VolunteerVacancyForm,
+    NonprofitEventForm,
     CommentForm
 )
 from .models import (
@@ -82,12 +84,8 @@ def fund_profile(request, fund_id):
         'fund': fund,
         'posts': fundraising_campaigns,
         'page_obj': page_obj,
+        'show_fund_link': True
     }
-
-    for post in fundraising_campaigns:
-        post.link_url = reverse(
-            'main:fundraising_campaign',
-            args=[fund_id, post.id])
     return render(request, template, context)
 
 
@@ -99,13 +97,89 @@ def list_funds(request):
     context = {
         'page_obj': page_obj,
     }
-
-    for fund in funds:
-        fund_user = fund.user
-        fund.link_url = reverse(
-            'main:fund_profile',
-            args=[fund_user.id])
     return render(request, template, context)
+
+
+def base_post_view(request, post_id, template_name, model, form_class):
+    post = get_object_or_404(model, id=post_id)
+    context = {
+        'post': post,
+        'form': form_class(),
+    }
+    return render(request, template_name, context)
+
+
+def fundraising_campaign_view(request, fund_id, pk):
+    template = 'posts/fundraising_campaign_detail.html'
+    return base_post_view(
+        request,
+        pk,
+        template,
+        FundraisingCampaign,
+        CommentForm
+    )
+
+
+def volunteer_vacancy_view(request, user_id, pk):
+    template = 'posts/volunteer_vacancy_detail.html'
+    return base_post_view(
+        request,
+        pk,
+        template,
+        VolunteerVacancy,
+        CommentForm
+    )
+
+
+def nonprofit_event_view(request, user_id, pk):
+    template = 'posts/nonprofit_event_detail.html'
+    return base_post_view(
+        request,
+        pk,
+        template,
+        NonprofitEvent,
+        CommentForm
+    )
+
+
+def base_post_list_view(request, template_name, model):
+    if model == FundraisingCampaign:
+        posts = model.objects.all()
+        page_obj = paginator(request.GET.get('page'), posts)
+        return render(request, template_name, {'page_obj': page_obj})
+
+    elif model == VolunteerVacancy:
+        posts = model.objects.all()
+        page_obj = paginator(request.GET.get('page'), posts)
+        return render(request, template_name, {'page_obj': page_obj})
+
+    posts = model.objects.all()
+    page_obj = paginator(request.GET.get('page'), posts)
+    return render(request, template_name, {'page_obj': page_obj})
+
+
+def fundraising_campaign_list_view(request):
+    return base_post_list_view(
+        request,
+        'main/fundraising_campaign_list.html',
+        FundraisingCampaign
+    )
+
+
+def volunteer_vacancy_list_view(request):
+    return base_post_list_view(
+        request,
+        'main/volunteer_vacancy_list.html',
+        VolunteerVacancy
+    )
+
+
+def nonprofit_event_list_view(request):
+    return base_post_list_view(
+        request,
+        'main/nonprofit_event_list.html',
+        NonprofitEvent
+    )
 
 
 def create_comment(request, model_type, model_id):
@@ -149,76 +223,64 @@ def create_fundraising_campaign(request):
     return render(request, template, {'form': form})
 
 
-def base_post_view(request, post_id, template_name, model, form_class):
-    post = get_object_or_404(model, id=post_id)
+def create_volunteer_vacancy(request):
+    template = 'main/create_volunteer_vacancy.html'
+    if request.method == 'POST':
+        form = VolunteerVacancyForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('main/index.html')
+    else:
+        form = VolunteerVacancyForm()
+    return render(request, template, {'form': form})
+
+
+def create_nonprofit_event(request):
+    template = 'main/create_nonprofit_event.html'
+    if request.method == 'POST':
+        form = NonprofitEventForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('main/index.html')
+    else:
+        form = NonprofitEventForm()
+    return render(request, template, {'form': form})
+
+
+def user_profile_me(request):
+    template = 'main/user_profile.html'
+    user = get_object_or_404(CustomUser, id=request.user.id)
+    if user.is_fund:
+        return redirect('main:fund_profile', fund_id=request.user.id)
+
+    user_profile, created = UserProfile.objects.get_or_create(user=user)
+
+    volunteer_vacancy = VolunteerVacancy.objects.filter(user=user)
+    nonprofit_event = NonprofitEvent.objects.filter(user=user)
+
+    posts = list(volunteer_vacancy) + list(nonprofit_event)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator(page_number, posts)
     context = {
-        'post': post,
-        'form': form_class(),
+        'user': user,
+        'user_profile': user_profile,
+        'posts': posts,
+        'page_obj': page_obj,
     }
-    return render(request, template_name, context)
 
+    for post in posts:
+        if isinstance(post, VolunteerVacancy):
+            post.show_link = True
+            post.link_url = reverse(
+                'main:volunteer_vacancy',
+                args=[request.user.id, post.id])
+        elif isinstance(post, NonprofitEvent):
+            post.show_link = True
+            post.link_url = reverse(
+                'main:nonprofit_event',
+                args=[request.user.id, post.id])
+        else:
+            post.show_link = False
 
-def fundraising_campaign_view(request, fund_id, pk):
-    template = 'includes/article_campaign.html'
-    return base_post_view(
-        request,
-        pk,
-        template,
-        FundraisingCampaign,
-        CommentForm
-    )
-
-
-def volunteer_vacancy_view(request, user_id, pk):
-    template = 'includes/article.html'
-    return base_post_view(
-        request,
-        pk,
-        template,
-        VolunteerVacancy,
-        CommentForm
-    )
-
-
-def nonprofit_event_view(request, user_id, pk):
-    template = 'includes/article.html'
-    return base_post_view(
-        request,
-        pk,
-        template,
-        NonprofitEvent,
-        CommentForm
-    )
-
-
-def base_post_list_view(request, fund_id, template_name, model):
-    posts = model.objects.filter(fund_id=fund_id)
-    page_obj = paginator(request.GET.get('page'), posts)
-    return render(request, template_name, {'page_obj': page_obj})
-
-
-def fundraising_campaign_list_view(request, fund_id):
-    return base_post_list_view(
-        request,
-        fund_id,
-        'main/fundraising_campaign_list.html',
-        FundraisingCampaign
-    )
-
-
-def volunteer_vacancy_list_view(request, fund_id):
-    return base_post_list_view(
-        request,
-        fund_id,
-        'main/fundraising_campaign_list.html',
-        VolunteerVacancy
-    )
-
-
-def nonprofit_event_list_view(request, fund_id):
-    return base_post_list_view(
-        request,
-        fund_id,
-        'main/fundraising_campaign_list.html',
-        NonprofitEvent
-    )
+    return render(request, template, context)

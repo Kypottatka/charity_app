@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Volunteer Vacancies</h1>
+    {% for post in page_obj %}
+        {% include 'includes/article.html' %}
+        <a href="{% url 'main:nonprofit_event' user_id=post.user.id pk=post.id %}">подробная информация</a>
+        {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
+    {% include 'main/includes/paginator.html' %}
+{% endblock %}

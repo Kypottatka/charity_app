@@ -9,31 +9,47 @@ app_name = 'main'
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('user/<int:user_id>/', views.user_profile, name='user_profile'),
+    path('users/me/', views.user_profile_me, name='user_profile_me'),
+    path('users/<int:user_id>/', views.user_profile, name='user_profile'),
     path(
-        'user/<int:user_id>/volunteer_vacancy/<int:pk>',
+        'users/<int:user_id>/volunteer_vacancy/<int:pk>',
         views.volunteer_vacancy_view,
         name='volunteer_vacancy'
     ),
     path(
-        'user/<int:user_id>/nonprofit_event/<int:pk>',
+        'users/<int:user_id>/nonprofit_event/<int:pk>',
         views.nonprofit_event_view,
         name='nonprofit_event'
     ),
     path(
-        'fund/',
+        'funds/',
         views.list_funds,
         name='list_funds'
     ),
     path(
-        'fund/<int:fund_id>/',
+        'funds/<int:fund_id>/',
         views.fund_profile,
         name='fund_profile'
     ),
     path(
-        'fund/<int:fund_id>/campaign/<int:pk>/',
+        'funds/<int:fund_id>/campaign/<int:pk>/',
         views.fundraising_campaign_view,
         name='fundraising_campaign',
+    ),
+    path(
+        'fundraising_campaigns/',
+        views.fundraising_campaign_list_view,
+        name='fundraising_campaign_list'
+    ),
+    path(
+        'nonprofit_events/',
+        views.nonprofit_event_list_view,
+        name='nonprofit_event_list'
+    ),
+    path(
+        'volunteer_vacancies/',
+        views.volunteer_vacancy_list_view,
+        name='volunteer_vacancy_list'
     ),
 ]
 

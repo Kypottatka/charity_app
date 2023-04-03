@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% load user_filters %}
+{% load static %}
+{% block title %} Пост {{ post.text|truncatechars:30 }} {% endblock title %}
+{% block content %}
+    <div class="row">
+      <aside class="col-12 col-md-3">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            Дата публикации: {{ post.created_at|date:"d M Y" }}
+          </li>
+          <li class="list-group-item">
+            Пользователь:
+            <br>
+            <a href="{% url 'main:user_profile' user_id=post.user.id %}">страница пользователя</a>
+          </li>
+          <li class="list-group-item">
+            Автор: {{ post.user.username }}
+          </li>
+        </ul>
+      </aside>
+      <article class="col-12 col-md-9">
+        <h3 class="card-title">{{ post.title }}</h3>
+        <p class="card-text">{{ post.description }}</p>
+      </article>
+    </div>
+
+{% endblock %}
