@@ -36,6 +36,9 @@ def user_profile(request, user_id):
     if user.is_fund:
         return redirect('main:fund_profile', fund_id=user_id)
 
+    if request.user.id == user_id:
+        return redirect('main:user_profile_me')
+
     user_profile, created = UserProfile.objects.get_or_create(user=user)
 
     volunteer_vacancy = VolunteerVacancy.objects.filter(user=user)
