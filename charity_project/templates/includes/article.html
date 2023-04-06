@@ -5,18 +5,21 @@
     <h3 class="card-title">{{ post.title }}</h3>
     <p class="card-text">{{ post.description }}</p>
     <li>
-    Автор: {{ post.user.username }}
+    Author: {{ post.user.username }}
     </li>
     <li>
-    Дата публикации: {{ post.created_at|date:"d M Y" }}
+    Publication Date: {{ post.created_at|date:"d M Y" }}
     </li>
     {% if post.location %}
     <li>
-      Местоположение: {{ post.location }}
+      Location: {{ post.location }}
     </li>
+    <li>
+      Date: {{ post.date }}
+      </li>
     {% endif %}
   </ul>
   {% if show_link and post.show_link %}
-  <a href="{{ post.link_url }}" style="color: #fd7e14;">подробная информация</a>
+  <a href="{{ post.link_url }}" style="color: #fd7e14;">details</a>
   {% endif %}
 </article>

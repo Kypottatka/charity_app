@@ -3,14 +3,17 @@ from .models import (
     FundraisingCampaign,
     VolunteerVacancy,
     NonprofitEvent,
-    Comment,
+    CommentFund,
+    CommentNonprofit,
+    CommentVolunteer,
     CustomUser,
+    Donation
 )
 
 
-class CommentForm(forms.ModelForm):
+class CommentFundForm(forms.ModelForm):
     class Meta:
-        model = Comment
+        model = CommentFund
         fields = ('content',)
 
         widgets = {
@@ -20,7 +23,39 @@ class CommentForm(forms.ModelForm):
         }
 
         labels = {
-            'text': 'Текст комментария',
+            'text': 'Your comment',
+        }
+
+
+class CommentNonprofitForm(forms.ModelForm):
+    class Meta:
+        model = CommentNonprofit
+        fields = ('content',)
+
+        widgets = {
+            'content': forms.Textarea(
+                attrs={'class': 'form-control', 'rows': 3}
+            ),
+        }
+
+        labels = {
+            'text': 'Your comment',
+        }
+
+
+class CommentVolunteerForm(forms.ModelForm):
+    class Meta:
+        model = CommentVolunteer
+        fields = ('content',)
+
+        widgets = {
+            'content': forms.Textarea(
+                attrs={'class': 'form-control', 'rows': 3}
+            ),
+        }
+
+        labels = {
+            'text': 'Your comment',
         }
 
 
@@ -42,9 +77,9 @@ class FundraisingCampaignForm(forms.ModelForm):
         }
 
         labels = {
-            'title': 'Заголовок',
-            'goal': 'Цель сбора',
-            'description': 'Описание',
+            'title': 'Title',
+            'goal': 'Goal',
+            'description': 'Description',
         }
 
 
@@ -63,12 +98,14 @@ class VolunteerVacancyForm(forms.ModelForm):
         }
 
         labels = {
-            'title': 'Заголовок',
-            'description': 'Описание',
+            'title': 'Title',
+            'description': 'Description',
         }
 
 
 class NonprofitEventForm(forms.ModelForm):
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+
     class Meta:
         model = NonprofitEvent
         fields = ('title', 'description', 'date', 'location')
@@ -81,7 +118,7 @@ class NonprofitEventForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'rows': 5}
             ),
             'date': forms.DateTimeInput(
-                attrs={'class': 'form-control'}
+                attrs={'type': 'date'}
             ),
             'location': forms.TextInput(
                 attrs={'class': 'form-control'}
@@ -89,14 +126,14 @@ class NonprofitEventForm(forms.ModelForm):
         }
 
         labels = {
-            'title': 'Заголовок',
-            'description': 'Описание',
-            'date': 'Дата',
-            'location': 'Место проведения',
+            'title': 'Title',
+            'description': 'Description',
+            'date': 'Date',
+            'location': 'Location',
         }
 
 
-class DonationForm(forms.Form):
+class DonationForm(forms.ModelForm):
     fund = forms.ModelChoiceField(
         queryset=CustomUser.objects.filter(is_fund=True),
         widget=forms.Select(attrs={'class': 'form-control'})
@@ -106,4 +143,5 @@ class DonationForm(forms.Form):
     )
 
     class Meta:
+        model = Donation
         fields = ('fund', 'amount',)

@@ -1,7 +1,7 @@
 {% load static %}
 {% block header %}
 <!-- ======= Header ======= -->
-<header id="header" class="d-flex align-items-center" style="background-color: #00173b;">
+<header id="header" class="d-flex align-items-center title animate__animated animate__fadeInDown" style="background-color: #00173b;">
     <div class="container d-flex align-items-center">
       <h1 class="logo me-auto"><a href="{% url 'main:index' %}" style="color: #fd7e14;">Charity App</a></h1>
 
@@ -9,11 +9,47 @@
         <ul class="nav nav-pills">
         {% with request.resolver_match.view_name as view_name %}
         {% if view_name  == 'main:index' %}
-          <li><a class="nav-link link-light scrollto" href="#hero">Home</a></li>
-          <li><a class="nav-link link-light scrollto" href="#about">About</a></li>
+          <li><a class="nav-link link-light scrollto" href="#services">Services</a></li>
           <li><a class="nav-link link-light scrollto" href="#team">Team</a></li>
           {% endif %}
-          <li class="dropdown"><a href="#" class="link-light"><span>Posts</span> <i class="bi bi-chevron-down"></i></a>
+          {% if request.user.is_authenticated %}
+          <li><a class="active" href="{% url 'main:list_funds' %}" style="color: #fd7e14;">Funds</a></li>
+          <li><li><a class="active" href="{% url 'main:donate' %}" style="color: #fd7e14;">Donate</a></li>
+          <li class="dropdown"><a href="#" class="link-light" ><span style="color: #fd7e14;">Create Post</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              {% if request.user.is_fund %}
+                  <li> 
+                    <a class="
+                    {% if view_name  == 'main/create_fundraising_campaign' %}
+                        active
+                      {% endif %}" 
+                      href="{% url 'main:create_fundraising_campaign' %}" style="color: #fd7e14;">
+                      Fundraising Campaign
+                    </a>
+                  </li>
+                  {% endif %}
+                  <li> 
+                    <a class="
+                    {% if view_name  == 'main/create_nonprofit_event' %}
+                        active
+                      {% endif %}" 
+                      href="{% url 'main:create_nonprofit_event' %}" style="color: #fd7e14;">
+                      Nonprofit Event
+                    </a>
+                  </li>
+                  <li> 
+                    <a class="
+                    {% if view_name  == 'main/create_volunteer_vacancy' %}
+                        active
+                      {% endif %}" 
+                      href="{% url 'main:create_volunteer_vacancy' %}" style="color: #fd7e14;">
+                      Volunteer Vacancy
+                    </a>
+                  </li>
+            </ul>
+          </li>
+          {% endif %}
+          <li class="dropdown"><a href="#" class="link-light" ><span style="color: #fd7e14;">Posts</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
                   <li> 
                     <a class="
@@ -21,7 +57,7 @@
                         active
                       {% endif %}" 
                       href="{% url 'main:fundraising_campaign_list' %}" style="color: #fd7e14;">
-                      Кампании по сбору средств
+                      Fundraising Campaigns
                     </a>
                   </li>
                   <li> 
@@ -30,7 +66,7 @@
                         active
                       {% endif %}" 
                       href="{% url 'main:nonprofit_event_list' %}" style="color: #fd7e14;">
-                      Некомерческие мероприятия
+                      Nonprofit Events
                     </a>
                   </li>
                   <li> 
@@ -39,7 +75,7 @@
                         active
                       {% endif %}" 
                       href="{% url 'main:volunteer_vacancy_list' %}" style="color: #fd7e14;">
-                      Ваканси волонтеров
+                      Volunteer Vacancies
                     </a>
                   </li>
             </ul>
@@ -51,7 +87,7 @@
                 active
             {% endif %}" 
             href="{% url 'users:logout' %}">
-              Выйти
+              Logout
             </a>
           </li>
           <li> 
@@ -60,7 +96,7 @@
               active
             {% endif %}" 
             href="{% url 'main:user_profile_me' %}">
-            Пользователь: {{ user.username }}
+            {{ user.username }}
             </a>
           </li>
           {% else %}
@@ -70,7 +106,7 @@
               active
             {% endif %}"
             href="{% url 'users:login' %}">
-            Войти
+            Login
             </a>
           </li>
           <li> 
@@ -79,7 +115,7 @@
               active
             {% endif %}" 
             href="{% url 'users:signup' %}">
-            Регистрация
+            Sign Up
             </a>
           </li>
           {% endif %}

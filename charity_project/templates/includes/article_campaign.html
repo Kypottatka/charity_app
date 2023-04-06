@@ -3,16 +3,17 @@
 <article>
   <ul style="list-style: none;">
     <h3 class="card-title">{{ post.title }}</h3>
+    <p class="card-text">{{ post.goal }}</p>
     <p class="card-text">{{ post.description }}</p>
     <li>
-    Автор: {{ post.fund.username }}
+    Author: {{ post.fund.username }}
     </li>
     <li>
-    Дата публикации: {{ post.created_at|date:"d M Y" }}
+    Publication Date: {{ post.created_at|date:"d M Y" }}
     </li>
     {% if post.location %}
     <li>
-      Местоположение: {{ post.location }}
+      Location: {{ post.location }}
     </li>
     {% endif %}
   </ul>

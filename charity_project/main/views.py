@@ -7,7 +7,10 @@ from .forms import (
     FundraisingCampaignForm,
     VolunteerVacancyForm,
     NonprofitEventForm,
-    CommentForm
+    CommentFundForm,
+    CommentNonprofitForm,
+    CommentVolunteerForm,
+    DonationForm,
 )
 from .models import (
     CustomUser,
@@ -16,6 +19,10 @@ from .models import (
     FundraisingCampaign,
     VolunteerVacancy,
     NonprofitEvent,
+    CommentFund,
+    CommentNonprofit,
+    CommentVolunteer,
+    Donation,
 )
 
 
@@ -27,7 +34,11 @@ def paginator(page_number, posts):
 
 def index(request):
     template = 'main/index.html'
-    return render(request, template)
+    donations = Donation.objects.all().order_by('-created_at')[:5]
+    context = {
+        'donations': donations,
+    }
+    return render(request, template, context)
 
 
 def user_profile(request, user_id):
@@ -41,8 +52,12 @@ def user_profile(request, user_id):
 
     user_profile, created = UserProfile.objects.get_or_create(user=user)
 
-    volunteer_vacancy = VolunteerVacancy.objects.filter(user=user)
-    nonprofit_event = NonprofitEvent.objects.filter(user=user)
+    volunteer_vacancy = VolunteerVacancy.objects.filter(user=user).order_by(
+        '-created_at'
+    )
+    nonprofit_event = NonprofitEvent.objects.filter(user=user).order_by(
+        '-created_at'
+    )
 
     posts = list(volunteer_vacancy) + list(nonprofit_event)
 
@@ -75,14 +90,23 @@ def user_profile(request, user_id):
 def fund_profile(request, fund_id):
     template = 'main/fund_profile.html'
 
+    donations = Donation.objects.filter(fund_id=fund_id)
+    raised = 0
+    for donation in donations:
+        raised += donation.amount
+
     fund = get_object_or_404(CustomUser, id=fund_id, is_fund=True)
 
     try:
         fund_profile = FundProfile.objects.get(user=fund)
     except FundProfile.DoesNotExist:
-        fund_profile = FundProfile.objects.create(user=fund, name=fund.username)
+        fund_profile = FundProfile.objects.create(
+            user=fund,
+            name=fund.username
+        )
 
-    fundraising_campaigns = FundraisingCampaign.objects.filter(fund=fund)
+    fundraising_campaigns = FundraisingCampaign.objects.filter(
+        fund=fund).order_by('-created_at')
 
     fund_profile = FundProfile.objects.get(user=fund)
 
@@ -93,7 +117,8 @@ def fund_profile(request, fund_id):
         'fund': fund,
         'posts': fundraising_campaigns,
         'page_obj': page_obj,
-        'show_fund_link': True
+        'show_fund_link': True,
+        'raised': int(raised),
     }
     return render(request, template, context)
 
@@ -111,10 +136,24 @@ def list_funds(request):
 
 def base_post_view(request, post_id, template_name, model, form_class):
     post = get_object_or_404(model, id=post_id)
-    context = {
-        'post': post,
-        'form': form_class(),
-    }
+    if model == FundraisingCampaign:
+        context = {
+            'post': post,
+            'form': form_class(),
+            'comments': CommentFund.objects.filter(post=post),
+        }
+    elif model == NonprofitEvent:
+        context = {
+            'post': post,
+            'form': form_class(),
+            'comments': CommentNonprofit.objects.filter(post=post),
+        }
+    elif model == VolunteerVacancy:
+        context = {
+            'post': post,
+            'form': form_class(),
+            'comments': CommentVolunteer.objects.filter(post=post),
+        }
     return render(request, template_name, context)
 
 
@@ -125,7 +164,7 @@ def fundraising_campaign_view(request, fund_id, pk):
         pk,
         template,
         FundraisingCampaign,
-        CommentForm
+        CommentFundForm
     )
 
 
@@ -136,7 +175,7 @@ def volunteer_vacancy_view(request, user_id, pk):
         pk,
         template,
         VolunteerVacancy,
-        CommentForm
+        CommentNonprofitForm
     )
 
 
@@ -147,22 +186,22 @@ def nonprofit_event_view(request, user_id, pk):
         pk,
         template,
         NonprofitEvent,
-        CommentForm
+        CommentVolunteerForm
     )
 
 
 def base_post_list_view(request, template_name, model):
     if model == FundraisingCampaign:
-        posts = model.objects.all()
+        posts = model.objects.all().order_by('-created_at')
         page_obj = paginator(request.GET.get('page'), posts)
         return render(request, template_name, {'page_obj': page_obj})
 
     elif model == VolunteerVacancy:
-        posts = model.objects.all()
+        posts = model.objects.all().order_by('-created_at')
         page_obj = paginator(request.GET.get('page'), posts)
         return render(request, template_name, {'page_obj': page_obj})
 
-    posts = model.objects.all()
+    posts = model.objects.all().order_by('-created_at')
     page_obj = paginator(request.GET.get('page'), posts)
     return render(request, template_name, {'page_obj': page_obj})
 
@@ -191,42 +230,56 @@ def nonprofit_event_list_view(request):
     )
 
 
-def create_comment(request, model_type, model_id):
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            new_comment = form.save(commit=False)
-            new_comment.user = request.user
+def add_comment_fund(request, fund_id, pk):
+    post = FundraisingCampaign.objects.get(pk=pk)
+    form = CommentFundForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.content = request.POST.get('content')
+        comment.user = request.user
+        comment.post = post
+        comment.save()
+    return redirect('main:fundraising_campaign', fund_id=fund_id, pk=pk)
 
-            if model_type == 'fundraising_campaign':
-                model = FundraisingCampaign
-            elif model_type == 'volunteer_vacancy':
-                model = VolunteerVacancy
-            elif model_type == 'nonprofit_event':
-                model = NonprofitEvent
 
-            content_object = get_object_or_404(model, pk=model_id)
-            new_comment.content_object = content_object
-            new_comment.save()
-            return redirect(content_object.get_absolute_url())
-    else:
-        form = CommentForm()
+def add_comment_nonprofit(request, user_id, pk):
+    post = NonprofitEvent.objects.get(pk=pk)
+    form = CommentNonprofitForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.content = request.POST.get('content')
+        comment.user = request.user
+        comment.post = post
+        comment.save()
+    return redirect('main:nonprofit_event', user_id=user_id, pk=pk)
 
-    context = {
-        'form': form,
-        'model_type': model_type,
-        'model_id': model_id,
-    }
-    return render(request, 'comment_create.html', context)
+
+def add_comment_volunteer(request, user_id, pk):
+    post = VolunteerVacancy.objects.get(pk=pk)
+    form = CommentVolunteerForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.content = request.POST.get('content')
+        comment.user = request.user
+        comment.post = post
+        comment.save()
+    return redirect('main:volunteer_vacancy', user_id=user_id, pk=pk)
 
 
 def create_fundraising_campaign(request):
+    if not request.user.is_fund:
+        return redirect('main:index')
     template = 'main/create_fundraising_campaign.html'
     if request.method == 'POST':
         form = FundraisingCampaignForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('main/index.html')
+            post = form.save(commit=False)
+            post.fund = request.user
+            post.title = request.POST.get('title')
+            post.description = request.POST.get('description')
+            post.goal = request.POST.get('goal')
+            post.save()
+            return redirect('main:fundraising_campaign_list')
     else:
         form = FundraisingCampaignForm()
     return render(request, template, {'form': form})
@@ -237,8 +290,12 @@ def create_volunteer_vacancy(request):
     if request.method == 'POST':
         form = VolunteerVacancyForm(request.POST)
         if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.title = request.POST.get('title')
+            post.description = request.POST.get('description')
             form.save()
-            return redirect('main/index.html')
+            return redirect('main:volunteer_vacancy_list')
     else:
         form = VolunteerVacancyForm()
     return render(request, template, {'form': form})
@@ -249,8 +306,14 @@ def create_nonprofit_event(request):
     if request.method == 'POST':
         form = NonprofitEventForm(request.POST)
         if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.title = request.POST.get('title')
+            post.description = request.POST.get('description')
+            post.date = request.POST.get('date')
+            post.location = request.POST.get('location')
             form.save()
-            return redirect('main/index.html')
+            return redirect('main:nonprofit_event_list')
     else:
         form = NonprofitEventForm()
     return render(request, template, {'form': form})
@@ -293,3 +356,28 @@ def user_profile_me(request):
             post.show_link = False
 
     return render(request, template, context)
+
+
+def donate(request):
+    funds = CustomUser.objects.filter(is_fund=True)
+
+    if request.method == 'POST':
+        form = DonationForm(request.POST)
+        if form.is_valid():
+            donate = form.save(commit=False)
+            donate.user = request.user
+            donate.fund = funds.get(id=request.POST.get('fund'))
+            donate.amount = request.POST.get('amount')
+            donate.save()
+            return redirect('main:donations')
+    else:
+        form = DonationForm()
+    return render(request, 'main/donate.html', {'form': form})
+
+
+def donations(request):
+    donations = Donation.objects.all().order_by('-created_at')
+    context = {
+        'donations': donations,
+    }
+    return render(request, 'main/donations.html', context)

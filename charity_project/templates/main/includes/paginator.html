@@ -4,12 +4,12 @@
     {% if page_obj.has_previous %}
       <li class="page-item">
         <a class="page-link" href="?page=1" style="background-color: white; color: #fd7e14;">
-          Первая
+          First
         </a>
       </li>
       <li class="page-item">
         <a class="page-link btn-success" href="?page={{ page_obj.previous_page_number }}" style="background-color: white; color: #fd7e14;">
-          Предыдущая
+          Previous
         </a>
       </li>
     {% endif %}
@@ -27,12 +27,12 @@
     {% if page_obj.has_next %}
       <li class="page-item">
         <a class="page-link" href="?page={{ page_obj.next_page_number }}" style="background-color: white; color: #fd7e14;">
-          Следующая
+          Next
         </a>
       </li>
       <li class="page-item">
         <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" style="background-color: white; color: #fd7e14;">
-          Последняя
+          Last
         </a>
       </li>
     {% endif %}    

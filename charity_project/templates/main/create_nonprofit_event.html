@@ -3,7 +3,14 @@
     <h2>Creating a Nonprofit Event</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        Title:
+        <p>{{ form.title }}</p>
+        Description:
+        <p>{{ form.description }}</p>
+        Date:
+        <p type="date">{{ form.date }}</p>
+        Location:
+        <p>{{ form.location }}</p>
         <button type="submit" class="btn btn-primary">Create</button>
     </form>
 {% endblock %}

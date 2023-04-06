@@ -9,6 +9,8 @@ app_name = 'main'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('donate/', views.donate, name='donate'),
+    path('donations/', views.donations, name='donations'),
     path('users/me/', views.user_profile_me, name='user_profile_me'),
     path('users/<int:user_id>/', views.user_profile, name='user_profile'),
     path(
@@ -17,9 +19,19 @@ urlpatterns = [
         name='volunteer_vacancy'
     ),
     path(
+        'users/<int:user_id>/volunteer_vacancy/<int:pk>/comment/',
+        views.add_comment_volunteer,
+        name='add_comment_volunteer'
+    ),
+    path(
         'users/<int:user_id>/nonprofit_event/<int:pk>',
         views.nonprofit_event_view,
         name='nonprofit_event'
+    ),
+    path(
+        'users/<int:user_id>/nonprofit_event/<int:pk>/comment/',
+        views.add_comment_nonprofit,
+        name='add_comment_nonprofit'
     ),
     path(
         'funds/',
@@ -37,6 +49,11 @@ urlpatterns = [
         name='fundraising_campaign',
     ),
     path(
+        'funds/<int:fund_id>/campaign/<int:pk>/comment/',
+        views.add_comment_fund,
+        name='add_comment_fund',
+    ),
+    path(
         'fundraising_campaigns/',
         views.fundraising_campaign_list_view,
         name='fundraising_campaign_list'
@@ -50,6 +67,21 @@ urlpatterns = [
         'volunteer_vacancies/',
         views.volunteer_vacancy_list_view,
         name='volunteer_vacancy_list'
+    ),
+    path(
+        'fundraising_campaigns/create/',
+        views.create_fundraising_campaign,
+        name='create_fundraising_campaign'
+    ),
+    path(
+        'nonprofit_events/create/',
+        views.create_nonprofit_event,
+        name='create_nonprofit_event'
+    ),
+    path(
+        'volunteer_vacancies/create/',
+        views.create_volunteer_vacancy,
+        name='create_volunteer_vacancy'
     ),
 ]
 

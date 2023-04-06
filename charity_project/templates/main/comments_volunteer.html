@@ -1,0 +1,28 @@
+{% load user_filters %}
+
+{% if user.is_authenticated %}
+  <div class="card my-4">
+    <h5 class="card-header">Comment:</h5>
+    <div class="card-body">
+      <form method="post" action="{% url 'main:add_comment_volunteer' user_id=post.user.id pk=post.id %}">
+        {% csrf_token %}      
+        <div class="form-group mb-2">
+          {{ form.content }}
+        </div>
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form>
+    </div>
+  </div>
+{% endif %}
+
+{% for comment in comments %}
+  <div class="media mb-4">
+    <div class="media-body">
+      <a href="{% url 'main:user_profile' user_id=post.user.id %}" style="color: #fd7e14;">{{ comment.user.username }}</a>
+      </a>
+      <p>
+        {{ comment.content }}
+      </p>
+    </div>
+  </div>
+{% endfor %}

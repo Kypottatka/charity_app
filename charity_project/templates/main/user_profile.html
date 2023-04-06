@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 {% load thumbnail %}
 {% block title %}
-Профайл пользователя {{ user.username }}
+User profile: {{ user.username }}
 {% endblock %}
 {% block content %}
 <section id="team" class="team text-center">
     <div class="row">
-            <div class="member">
+            <div class="member title animate__animated animate__fadeInUp">
                 <img src="{% thumbnail user_profile.avatar "400x400" crop="center" %}">
                     <h1>{{ user.username }}</h1>
                     <hr></hr>
             </div>
     </div>
     <div class="mb-5">
-        <h4>Местоположение: {{ user_profile.location }} </h4>
-        <h3>Всего постов: {{ page_obj.paginator.count }} </h3>
+        <h4>Location: {{ user_profile.location }} </h4>
+        <h3>All posts: {{ page_obj.paginator.count }} </h3>
     </div>
     {% for post in page_obj %}
         {% include 'includes/article.html' with show_link=True %}

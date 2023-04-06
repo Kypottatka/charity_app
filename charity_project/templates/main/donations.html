@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}
+Donations
+{% endblock %}
+{% block content %}
+    {% for donation in donations %}
+        <p class="fst-italic">
+        {{donation.user}} donated {{donation.amount}} --------------------------------- to Fund: {{donation.fund}}
+        </p>
+        {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
+    {% include 'main/includes/paginator.html' %}
+{% endblock %}

@@ -8,15 +8,15 @@
       <aside class="col-12 col-md-3">
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
-            Дата публикации: {{ post.created_at|date:"d M Y" }}
+            Publications Date: {{ post.created_at|date:"d M Y" }}
           </li>
           <li class="list-group-item">
-            Фонд:
+            Fund:
             <br>
-            <a href="{% url 'main:fund_profile' fund_id=post.fund.id %}" style="color: #fd7e14;">страница фонда</a>
+            <a href="{% url 'main:fund_profile' fund_id=post.fund.id %}" style="color: #fd7e14;">fund page</a>
           </li>
           <li class="list-group-item">
-            Автор: {{ post.fund.username }}
+            Author: {{ post.fund.username }}
           </li>
         </ul>
       </aside>
@@ -24,5 +24,8 @@
         <h3 class="card-title">{{ post.title }}</h3>
         <p class="card-text">{{ post.description }}</p>
       </article>
+      <div class="card my-4">
+        {% include 'main/comments_fund.html' %}
+      </div>
     </div>
 {% endblock %}

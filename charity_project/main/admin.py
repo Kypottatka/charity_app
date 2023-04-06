@@ -4,7 +4,9 @@ from .models import (
     UserProfile,
     FundProfile,
     Donation,
-    Comment,
+    CommentFund,
+    CommentNonprofit,
+    CommentVolunteer,
     FundraisingCampaign,
     VolunteerVacancy,
     NonprofitEvent,
@@ -14,7 +16,9 @@ from .models import (
 admin.site.register(CustomUser)
 admin.site.register(UserProfile)
 admin.site.register(Donation)
-admin.site.register(Comment)
+admin.site.register(CommentFund)
+admin.site.register(CommentNonprofit)
+admin.site.register(CommentVolunteer)
 admin.site.register(FundProfile)
 admin.site.register(FundraisingCampaign)
 admin.site.register(VolunteerVacancy)

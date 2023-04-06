@@ -8,15 +8,15 @@
       <aside class="col-12 col-md-3">
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
-            Дата публикации: {{ post.created_at|date:"d M Y" }}
+            Publication Date: {{ post.created_at|date:"d M Y" }}
           </li>
           <li class="list-group-item">
-            Пользователь:
+            User:
             <br>
-            <a href="{% url 'main:user_profile' user_id=post.user.id %}">страница пользователя</a>
+            <a href="{% url 'main:user_profile' user_id=post.user.id %}" style="color: #fd7e14;">user page</a>
           </li>
           <li class="list-group-item">
-            Автор: {{ post.user.username }}
+            Author: {{ post.user.username }}
           </li>
         </ul>
       </aside>
@@ -24,6 +24,9 @@
         <h3 class="card-title">{{ post.title }}</h3>
         <p class="card-text">{{ post.description }}</p>
       </article>
+      <div class="card my-4">
+        {% include 'main/comments_nonprofit.html' %}
+      </div>
     </div>
 
 {% endblock %}

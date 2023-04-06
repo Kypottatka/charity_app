@@ -4,7 +4,7 @@
     <h1>Nonprofit Events</h1>
     {% for post in page_obj %}
         {% include 'includes/article.html' %}
-        <a href="{% url 'main:nonprofit_event' user_id=post.user.id pk=post.id %}" style="color: #fd7e14;">подробная информация</a>
+        <a href="{% url 'main:nonprofit_event' user_id=post.user.id pk=post.id %}" style="color: #fd7e14;">details</a>
         {% if not forloop.last %}<hr>{% endif %}
     {% endfor %}
     {% include 'main/includes/paginator.html' %}

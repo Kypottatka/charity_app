@@ -1,7 +1,5 @@
 from django.db import models
 from django.urls import reverse
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AbstractUser
 
 
@@ -46,6 +44,7 @@ class Donation(models.Model):
         on_delete=models.CASCADE
     )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 # Модели трех видов постов:
@@ -89,14 +88,22 @@ class NonprofitEvent(models.Model):
 
 
 # Модель для комментариев
-class Comment(models.Model):
+class CommentFund(models.Model):
+    post = models.ForeignKey(FundraisingCampaign, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-    # Поля для реализации GenericForeignKey(отношение один ко многим)
-    # Отношение один ко многим моделеи Comment к моделям Постов
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+
+class CommentNonprofit(models.Model):
+    post = models.ForeignKey(NonprofitEvent, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class CommentVolunteer(models.Model):
+    post = models.ForeignKey(VolunteerVacancy, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)

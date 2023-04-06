@@ -4,7 +4,7 @@
     <h1>Fundraising Campaigns</h1>
     {% for post in page_obj %}
         {% include 'includes/article_campaign.html' %}
-        <a href="{% url 'main:fundraising_campaign' fund_id=post.fund.id pk=post.id %}" style="color: #fd7e14;">подробная информация</a>
+        <a href="{% url 'main:fundraising_campaign' fund_id=post.fund.id pk=post.id %}" style="color: #fd7e14;">details</a>
         {% if not forloop.last %}<hr>{% endif %}
     {% endfor %}
     {% include 'main/includes/paginator.html' %}
