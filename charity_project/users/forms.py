@@ -7,7 +7,7 @@ class CreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
     username = forms.CharField(required=True)
     is_fund = forms.BooleanField(
-        required=True,
+        required=False,
         widget=forms.CheckboxInput,
     )
 

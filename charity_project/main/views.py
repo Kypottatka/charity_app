@@ -11,6 +11,8 @@ from .forms import (
     CommentNonprofitForm,
     CommentVolunteerForm,
     DonationForm,
+    EditUserProfileForm,
+    EditFundProfileForm
 )
 from .models import (
     CustomUser,
@@ -87,6 +89,30 @@ def user_profile(request, user_id):
     return render(request, template, context)
 
 
+def edit_user_profile(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+    if request.user.id != user_id:
+        return redirect('main:user_profile_me')
+
+    user_profile, created = UserProfile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        form = EditUserProfileForm(
+            request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('main:user_profile', user_id=user_id)
+    else:
+        form = EditUserProfileForm(instance=user_profile)
+
+    context = {
+        'user': user,
+        'user_profile': user_profile,
+        'form': form,
+    }
+    return render(request, 'main/edit_user_profile.html', context)
+
+
 def fund_profile(request, fund_id):
     template = 'main/fund_profile.html'
 
@@ -121,6 +147,30 @@ def fund_profile(request, fund_id):
         'raised': int(raised),
     }
     return render(request, template, context)
+
+
+def edit_fund_profile(request, fund_id):
+    fund = get_object_or_404(CustomUser, id=fund_id)
+    if request.user.id != fund_id:
+        return redirect('main:fund_profile_me')
+
+    fund_profile, created = FundProfile.objects.get_or_create(user=fund)
+
+    if request.method == 'POST':
+        form = EditFundProfileForm(
+            request.POST, request.FILES, instance=fund_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('main:fund_profile', fund_id=fund_id)
+    else:
+        form = EditFundProfileForm(instance=fund_profile)
+
+    context = {
+        'fund': fund,
+        'fund_profile': fund_profile,
+        'form': form,
+    }
+    return render(request, 'main/edit_fund_profile.html', context)
 
 
 def list_funds(request):

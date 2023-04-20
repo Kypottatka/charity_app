@@ -1,4 +1,5 @@
 from django import forms
+from django.core.files.images import get_image_dimensions
 from .models import (
     FundraisingCampaign,
     VolunteerVacancy,
@@ -7,8 +8,49 @@ from .models import (
     CommentNonprofit,
     CommentVolunteer,
     CustomUser,
-    Donation
+    Donation,
+    UserProfile,
+    FundProfile
 )
+
+
+class EditUserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('avatar', 'location')
+        widgets = {
+            'avatar': forms.ClearableFileInput(
+                attrs={'class': 'form-control-file'}),
+            'location': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def clean_avatar(self):
+        avatar = self.cleaned_data.get('avatar')
+        if avatar:
+            width, height = get_image_dimensions(avatar)
+            if not (width and height):
+                raise forms.ValidationError("File is not an image.")
+        return avatar
+
+
+class EditFundProfileForm(forms.ModelForm):
+    class Meta:
+        model = FundProfile
+        fields = ('name', 'avatar', 'description')
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'avatar': forms.ClearableFileInput(
+                attrs={'class': 'form-control-file'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'})
+        }
+
+    def clean_avatar(self):
+        avatar = self.cleaned_data.get('avatar')
+        if avatar:
+            width, height = get_image_dimensions(avatar)
+            if not (width and height):
+                raise forms.ValidationError("File is not an image.")
+        return avatar
 
 
 class CommentFundForm(forms.ModelForm):

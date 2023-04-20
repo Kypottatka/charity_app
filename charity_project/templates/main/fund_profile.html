@@ -17,6 +17,7 @@ Fund Profile {{ fund_profile.name }}
         <h2>Description</h2>
         <p>{{ fund_profile.description }}</p>
         <h3>All posts: {{ page_obj.paginator.count }} </h3>
+        <a href="{% url 'main:edit_fund_profile' fund_id=fund.id %}" style="color: #fd7e14;">Edit profile</a>
     </div>
     {% for post in page_obj %}
         {% include 'includes/article_campaign.html' %}

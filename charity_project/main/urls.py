@@ -14,6 +14,11 @@ urlpatterns = [
     path('users/me/', views.user_profile_me, name='user_profile_me'),
     path('users/<int:user_id>/', views.user_profile, name='user_profile'),
     path(
+        'users/<int:user_id>/edit/',
+        views.edit_user_profile,
+        name='edit_user_profile'
+    ),
+    path(
         'users/<int:user_id>/volunteer_vacancy/<int:pk>',
         views.volunteer_vacancy_view,
         name='volunteer_vacancy'
@@ -42,6 +47,11 @@ urlpatterns = [
         'funds/<int:fund_id>/',
         views.fund_profile,
         name='fund_profile'
+    ),
+    path(
+        'funds/<int:fund_id>/edit/',
+        views.edit_fund_profile,
+        name='edit_fund_profile'
     ),
     path(
         'funds/<int:fund_id>/campaign/<int:pk>/',
