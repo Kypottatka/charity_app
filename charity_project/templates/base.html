@@ -28,9 +28,9 @@
       {% endblock %} 
     </title>
   </head>
-  <body>       
+  <body class="d-flex flex-column min-vh-100">       
     {% include 'includes/header_ref.html' %}
-    <main class="container py-5">
+    <main class="container py-5 flex-grow-1">
       {% block content %}
         Контент не подвезли :(
       {% endblock %}

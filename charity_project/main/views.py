@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
@@ -12,7 +13,8 @@ from .forms import (
     CommentVolunteerForm,
     DonationForm,
     EditUserProfileForm,
-    EditFundProfileForm
+    EditFundProfileForm,
+    UpdateBalanceForm
 )
 from .models import (
     CustomUser,
@@ -41,6 +43,27 @@ def index(request):
         'donations': donations,
     }
     return render(request, template, context)
+
+
+def balance(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+    user_profile = UserProfile.objects.get(user=user)
+
+    if request.method == 'POST':
+        form = UpdateBalanceForm(request.POST)
+        if form.is_valid():
+            amount = form.cleaned_data['amount']
+            user_profile.balance += amount
+            user_profile.save()
+            return render(request, 'main/verifying_payment.html')
+    else:
+        form = UpdateBalanceForm()
+
+    context = {
+        'form': form,
+        'user_profile': user_profile,
+    }
+    return render(request, 'main/balance.html', context)
 
 
 def user_profile(request, user_id):
@@ -117,7 +140,7 @@ def fund_profile(request, fund_id):
     template = 'main/fund_profile.html'
 
     donations = Donation.objects.filter(fund_id=fund_id)
-    raised = 0
+    raised = FundProfile.objects.get(user_id=fund_id).raised
     for donation in donations:
         raised += donation.amount
 
@@ -418,8 +441,17 @@ def donate(request):
             donate.user = request.user
             donate.fund = funds.get(id=request.POST.get('fund'))
             donate.amount = request.POST.get('amount')
-            donate.save()
-            return redirect('main:donations')
+            user_profile = request.user.userprofile
+            amount = Decimal(donate.amount)
+
+            if user_profile.balance >= amount:
+                user_profile.balance -= amount
+                user_profile.save()
+
+                donate.save()
+                return redirect('main:donations')
+            else:
+                form.add_error(None, "Insufficient balance for the donation.")
     else:
         form = DonationForm()
     return render(request, 'main/donate.html', {'form': form})

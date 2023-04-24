@@ -9,7 +9,7 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=255, unique=True)
-    is_fund = models.BooleanField(default=False, help_text='Фонд')
+    is_fund = models.BooleanField(default=False, help_text='Fund')
 
 
 # Модель профиля для пользователей
@@ -17,6 +17,12 @@ class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to='avatars/')
     location = models.CharField(max_length=255, blank=True)
+    balance = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00,
+        help_text='Balance'
+    )
 
 
 # Модель профиля для фондов
@@ -25,6 +31,7 @@ class FundProfile(models.Model):
     name = models.CharField(max_length=255)
     avatar = models.ImageField(upload_to='funds_avatars/')
     description = models.TextField(blank=True)
+    raised = models.DecimalField(default=0, max_digits=20, decimal_places=2)
 
 
 # Модель для донатов

@@ -10,12 +10,15 @@ User profile: {{ user.username }}
                 <img src="{% thumbnail user_profile.avatar "400x400" crop="center" %}">
                     <h1>{{ user.username }}</h1>
                     <hr></hr>
+                    <h3>Balance: {{ user_profile.balance }}</h3>
             </div>
     </div>
     <div class="mb-5">
         <h4>Location: {{ user_profile.location }} </h4>
         <h3>All posts: {{ page_obj.paginator.count }} </h3>
+        {% if request.user.id == user.id %}
         <a href="{% url 'main:edit_user_profile' user_id=request.user.id %}" style="color: #fd7e14;">Edit profile</a>
+        {% endif %}
     </div>
     {% for post in page_obj %}
         {% include 'includes/article.html' with show_link=True %}

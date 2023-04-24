@@ -9,6 +9,7 @@ app_name = 'main'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('balance/<int:user_id>/', views.balance, name='balance'),
     path('donate/', views.donate, name='donate'),
     path('donations/', views.donations, name='donations'),
     path('users/me/', views.user_profile_me, name='user_profile_me'),
